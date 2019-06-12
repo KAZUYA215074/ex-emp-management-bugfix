@@ -28,12 +28,20 @@ public class AdministratorService {
 	 * @param administrator 管理者情報
 	 * @throws SQLException
 	 */
-	public boolean insert(Administrator administrator) {
-		Administrator judgment = administratorRepository.findByMailAddress(administrator.getMailAddress());
-		if (judgment == null) {
-			administratorRepository.insert(administrator);
+	public void insert(Administrator administrator) {
+		administratorRepository.insert(administrator);
+	}
+
+	/**
+	 * メールアドレスの重複チェックをします.
+	 * 
+	 * @param address メールアドレス
+	 * @return 判定結果
+	 */
+	public boolean findByMailAddress(String address) {
+		if (administratorRepository.findByMailAddress(address) == null) {
 			return false;
-		}else {
+		} else {
 			return true;
 		}
 	}
