@@ -1,5 +1,6 @@
 package jp.co.sample.emp_management.form;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 /**
@@ -13,6 +14,7 @@ public class InsertAdministratorForm {
 	@NotBlank(message="名前を入力してください")
 	private String name;
 	/** メールアドレス */
+	@Email
 	@NotBlank(message="メールアドレスを入力してください")
 	private String mailAddress;
 	/** パスワード */
