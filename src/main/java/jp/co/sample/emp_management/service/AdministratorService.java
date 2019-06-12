@@ -1,5 +1,7 @@
 package jp.co.sample.emp_management.service;
 
+import java.sql.SQLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +26,9 @@ public class AdministratorService {
 	 * 管理者情報を登録します.
 	 * 
 	 * @param administrator　管理者情報
+	 * @throws SQLException 
 	 */
-	public void insert(Administrator administrator) {
+	public void insert(Administrator administrator) throws SQLException {
 		administratorRepository.insert(administrator);
 	}
 	

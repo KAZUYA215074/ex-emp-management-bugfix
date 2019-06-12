@@ -1,5 +1,8 @@
 package jp.co.sample.emp_management.controller;
 
+import java.sql.SQLException;
+import java.util.UUID;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
@@ -29,7 +32,7 @@ public class AdministratorController {
 
 	@Autowired
 	private AdministratorService administratorService;
-	
+
 	@Autowired
 	private HttpSession session;
 
@@ -42,8 +45,8 @@ public class AdministratorController {
 	public InsertAdministratorForm setUpInsertAdministratorForm() {
 		return new InsertAdministratorForm();
 	}
-	
-	//  (SpringSecurityに任せるためコメントアウトしました)
+
+	// (SpringSecurityに任せるためコメントアウトしました)
 	@ModelAttribute
 	public LoginForm setUpLoginForm() {
 		return new LoginForm();
@@ -59,27 +62,40 @@ public class AdministratorController {
 	 */
 	@RequestMapping("/toInsert")
 	public String toInsert() {
+		String token = UUID.randomUUID().toString();
+		session.setAttribute("token", token);
 		return "administrator/insert";
 	}
 
 	/**
 	 * 管理者情報を登録します.
 	 * 
-	 * @param form
-	 *            管理者情報用フォーム
+	 * @param form 管理者情報用フォーム
 	 * @return ログイン画面へリダイレクト
 	 */
 	@RequestMapping("/insert")
-	public String insert(@Validated InsertAdministratorForm form ,BindingResult result) {
-		
+	public String insert(@Validated InsertAdministratorForm form, BindingResult result, Model model, String token) {
+
 		if (result.hasErrors()) {
 			return this.toInsert();
 		}
-		
+		// ダブルサブミット防止
+		String tokenInSession = (String) session.getAttribute("token");
+		if (token == null || !(token.equals(tokenInSession))) {
+			System.out.println("OK");
+			return "redirect:/";
+		}
+
 		Administrator administrator = new Administrator();
 		// フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, administrator);
-		administratorService.insert(administrator);
+		try {
+			administratorService.insert(administrator);
+		} catch (SQLException ex) {
+			model.addAttribute("error", "既に同じメールアドレスが登録されています");
+			return this.toInsert();
+		}
+
 		return "redirect:/";
 	}
 
@@ -99,10 +115,8 @@ public class AdministratorController {
 	/**
 	 * ログインします.
 	 * 
-	 * @param form
-	 *            管理者情報用フォーム
-	 * @param result
-	 *            エラー情報格納用オブッジェクト
+	 * @param form   管理者情報用フォーム
+	 * @param result エラー情報格納用オブッジェクト
 	 * @return ログイン後の従業員一覧画面
 	 */
 	@RequestMapping("/login")
@@ -114,7 +128,7 @@ public class AdministratorController {
 		}
 		return "forward:/employee/showList";
 	}
-	
+
 	/////////////////////////////////////////////////////
 	// ユースケース：ログアウトをする
 	/////////////////////////////////////////////////////
@@ -128,5 +142,5 @@ public class AdministratorController {
 		session.invalidate();
 		return "redirect:/";
 	}
-	
+
 }

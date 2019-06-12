@@ -1,5 +1,6 @@
 package jp.co.sample.emp_management.repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +58,9 @@ public class AdministratorRepository {
 	 * 管理者情報を挿入します.
 	 * 
 	 * @param administrator 管理者情報
+	 * @throws SQLException 
 	 */
-	public void insert(Administrator administrator) {
+	public void insert(Administrator administrator) throws SQLException {
 		SqlParameterSource param = new BeanPropertySqlParameterSource(administrator);
 		String sql = "insert into administrators(name,mail_address,password)values(:name,:mailAddress,:password);";
 		template.update(sql, param);

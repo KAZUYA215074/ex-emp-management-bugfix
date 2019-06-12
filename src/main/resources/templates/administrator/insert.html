@@ -34,6 +34,11 @@
 					<form method="post" action="login.html" th:action="@{/insert}" th:object="${insertAdministratorForm}">
 						<fieldset>
 							<legend>管理者登録<br>(システムにログインできる管理者を登録します)</legend>
+							<div class="form-group">
+								<div th:if="${error!=null}" class="alert alert-danger">
+			                        <p th:text="${error}"></p>
+			                    </div>
+							</div>
 							<!-- 氏名 -->
 							<div class="form-group">
 								<div class="row">
@@ -83,6 +88,7 @@
 							<div class="form-group">
 								<div class="row">
 									<div class="col-sm-12">
+									<input type="hidden" name="token" th:value="${session.token}">
 										<button type="submit" class="btn btn-primary">登録</button>
 									</div>
 								</div>
