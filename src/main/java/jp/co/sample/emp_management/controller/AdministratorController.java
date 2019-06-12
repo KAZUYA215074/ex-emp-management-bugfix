@@ -86,12 +86,13 @@ public class AdministratorController {
 			return "redirect:/";
 		}
 
+		session.removeAttribute("token");
+
 		Administrator administrator = new Administrator();
 		// フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, administrator);
-		try {
-			administratorService.insert(administrator);
-		} catch (SQLException ex) {
+		administratorService.insert(administrator);
+		if (administratorService.insert(administrator) == true) {
 			model.addAttribute("error", "既に同じメールアドレスが登録されています");
 			return this.toInsert();
 		}

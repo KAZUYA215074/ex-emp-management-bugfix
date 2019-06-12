@@ -18,25 +18,32 @@ import jp.co.sample.emp_management.repository.AdministratorRepository;
 @Service
 @Transactional
 public class AdministratorService {
-	
+
 	@Autowired
 	private AdministratorRepository administratorRepository;
 
 	/**
 	 * 管理者情報を登録します.
 	 * 
-	 * @param administrator　管理者情報
-	 * @throws SQLException 
+	 * @param administrator 管理者情報
+	 * @throws SQLException
 	 */
-	public void insert(Administrator administrator) throws SQLException {
-		administratorRepository.insert(administrator);
+	public boolean insert(Administrator administrator) {
+		Administrator judgment = administratorRepository.findByMailAddress(administrator.getMailAddress());
+		if (judgment == null) {
+			administratorRepository.insert(administrator);
+			return false;
+		}else {
+			return true;
+		}
 	}
-	
+
 	/**
 	 * ログインをします.
+	 * 
 	 * @param mailAddress メールアドレス
-	 * @param password パスワード
-	 * @return 管理者情報　存在しない場合はnullが返ります
+	 * @param password    パスワード
+	 * @return 管理者情報 存在しない場合はnullが返ります
 	 */
 	public Administrator login(String mailAddress, String passward) {
 		Administrator administrator = administratorRepository.findByMailAddressAndPassward(mailAddress, passward);
