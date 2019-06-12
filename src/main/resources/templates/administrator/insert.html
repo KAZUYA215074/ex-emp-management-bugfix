@@ -34,9 +34,16 @@
 					<form method="post" action="login.html" th:action="@{/insert}" th:object="${insertAdministratorForm}">
 						<fieldset>
 							<legend>管理者登録<br>(システムにログインできる管理者を登録します)</legend>
+							<!-- パスワード確認のエラー表示 -->
 							<div class="form-group">
-								<div th:if="${error!=null}" class="alert alert-danger">
-			                        <p th:text="${error}"></p>
+								<div th:if="${passwordError!=null}" class="alert alert-danger">
+			                        <p th:text="${passwordError}"></p>
+			                    </div>
+							</div>
+							<!-- 同一のメールアドレス登録時のエラー表示 -->
+							<div class="form-group">
+								<div th:if="${mailAddressError!=null}" class="alert alert-danger">
+			                        <p th:text="${mailAddressError}"></p>
 			                    </div>
 							</div>
 							<!-- 氏名 -->
@@ -66,6 +73,7 @@
 										</label>
 										<input type="text" name="mailAddress" id="mailAddress" class="form-control" placeholder="yamada@mail.com"
 											 th:field="*{mailAddress}" th:errorclass="error-input" value="yamada@mail.com">
+											 
 									</div>
 								</div>
 							</div>
@@ -81,6 +89,21 @@
 										</label>
 										<input type="password" name="password" id="password" class="form-control" placeholder="password"
 											 th:field="*{password}" th:errorclass="error-input" value="xxxxxxxx">
+									</div>
+								</div>
+							</div>
+							<!-- パスワード(確認用) -->
+							<div class="form-group">
+								<div class="row">
+									<div class="col-sm-12">
+										<label for="passwordAgain">
+											パスワード(確認用):
+										</label>
+										<label th:if="${#fields.hasErrors('passwordAgain')}" th:errors="*{passwordAgain}" class="error-messages">
+											パスワード(確認用)を入力してください
+										</label>
+										<input type="password" name="passwordAgain" id="passwordAgain" class="form-control" placeholder="password(again)"
+											 th:field="*{passwordAgain}" th:errorclass="error-input" value="xxxxxxxx">
 									</div>
 								</div>
 							</div>

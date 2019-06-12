@@ -79,10 +79,15 @@ public class AdministratorController {
 		if (result.hasErrors()) {
 			return this.toInsert();
 		}
-		// ダブルサブミット防止
+
+		if (form.getPassword() != form.getPasswordAgain()) {
+			model.addAttribute("passwordError", "入力されたパスワードが異なります");
+			return this.toInsert();
+		}
+
+		// トークン
 		String tokenInSession = (String) session.getAttribute("token");
 		if (token == null || !(token.equals(tokenInSession))) {
-			System.out.println("OK");
 			return "redirect:/";
 		}
 
@@ -93,7 +98,7 @@ public class AdministratorController {
 		BeanUtils.copyProperties(form, administrator);
 		administratorService.insert(administrator);
 		if (administratorService.insert(administrator) == true) {
-			model.addAttribute("error", "既に同じメールアドレスが登録されています");
+			model.addAttribute("mailAddressError", "既に同じメールアドレスが登録されています");
 			return this.toInsert();
 		}
 
