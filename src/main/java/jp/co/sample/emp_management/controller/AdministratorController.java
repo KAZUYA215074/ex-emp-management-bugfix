@@ -128,10 +128,15 @@ public class AdministratorController {
 	 * @return ログイン後の従業員一覧画面
 	 */
 	@RequestMapping("/login")
-	public String login(LoginForm form, BindingResult result, Model model) {
+	public String login(@Validated LoginForm form, BindingResult result, Model model) {
+		if(result.hasErrors()) {
+			System.out.println("OK");
+			return this.toLogin();
+		}
+		
 		Administrator administrator = administratorService.login(form.getMailAddress(), form.getPassword());
 		if (administrator == null) {
-			result.addError(new ObjectError("loginError", "メールアドレスまたはパスワードが不正です。"));
+			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが間違っています");
 			return toLogin();
 		}
 		
