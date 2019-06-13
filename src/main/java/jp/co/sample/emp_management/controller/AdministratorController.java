@@ -6,6 +6,10 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +28,7 @@ import jp.co.sample.emp_management.service.AdministratorService;
  * @author igamasayuki
  *
  */
+@SpringBootApplication
 @Controller
 @RequestMapping("/")
 public class AdministratorController {
@@ -33,6 +38,14 @@ public class AdministratorController {
 
 	@Autowired
 	private HttpSession session;
+	
+	@Autowired
+    PasswordEncoder passwordEncoder;
+	
+	@Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 	/**
 	 * 使用するフォームオブジェクトをリクエストスコープに格納する.
@@ -90,7 +103,6 @@ public class AdministratorController {
 
 		// パスワード誤入力チェック
 		if (!form.getPassword().equals(form.getPasswordAgain())) {
-			System.out.println("OK");
 			model.addAttribute("passwordError", "入力されたパスワードが異なります");
 			return this.toInsert();
 		}
@@ -100,10 +112,14 @@ public class AdministratorController {
 		BeanUtils.copyProperties(form, administrator);
 
 		// メールアドレスチェック
-		if (administratorService.findByMailAddress(administrator.getMailAddress()) == true) {
+		if (administratorService.findByMailAddress(administrator.getMailAddress()) != null) {
 			model.addAttribute("mailAddressError", "既に同じメールアドレスが登録されています");
 			return this.toInsert();
 		}
+		// パスワードのハッシュ化
+		String hashedPassword = administratorService.Encde(administrator.getPassword());
+		administrator.setPassword(hashedPassword);
+		
 		administratorService.insert(administrator);
 
 		return "redirect:/";
@@ -147,11 +163,21 @@ public class AdministratorController {
 		}
 
 		// 管理者情報の照合
-		Administrator administrator = administratorService.login(form.getMailAddress(), form.getPassword());
-		if (administrator == null) {
+		if (administratorService.findByMailAddress(form.getMailAddress()) == null) {
+			model.addAttribute("errorMessage", "そのメールアドレスは登録されていません");
+			return this.toInsert();
+		}
+		Administrator administrator = administratorService.findByMailAddress(form.getMailAddress());
+		if(!passwordEncoder.matches(form.getPassword(), administrator.getPassword())) {
 			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが間違っています");
 			return toLogin();
 		}
+		
+//		Administrator administrator = administratorService.login(form.getMailAddress(), form.getPassword());
+//		if (administrator == null) {
+//			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが間違っています");
+//			return toLogin();
+//		}
 
 		session.setAttribute("administratorName", administrator.getName());
 
