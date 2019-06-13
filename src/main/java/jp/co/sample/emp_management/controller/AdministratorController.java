@@ -60,8 +60,10 @@ public class AdministratorController {
 	 */
 	@RequestMapping("/toInsert")
 	public String toInsert() {
+		// トークン
 		String token = UUID.randomUUID().toString();
 		session.setAttribute("insertToken", token);
+		
 		return "administrator/insert";
 	}
 
@@ -81,10 +83,12 @@ public class AdministratorController {
 		}
 		session.removeAttribute("insertToken");
 		
+		// 入力値チェック
 		if (result.hasErrors()) {
 			return this.toInsert();
 		}
 
+		// パスワード誤入力チェック
 		if (!form.getPassword().equals(form.getPasswordAgain())) {
 			System.out.println("OK");
 			model.addAttribute("passwordError", "入力されたパスワードが異なります");
@@ -95,6 +99,7 @@ public class AdministratorController {
 		// フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, administrator);
 
+		// メールアドレスチェック
 		if (administratorService.findByMailAddress(administrator.getMailAddress()) == true) {
 			model.addAttribute("mailAddressError", "既に同じメールアドレスが登録されています");
 			return this.toInsert();
@@ -128,17 +133,20 @@ public class AdministratorController {
 	 */
 	@RequestMapping("/login")
 	public String login(@Validated LoginForm form, BindingResult result, Model model, String loginToken) {
-		/** トークン **/
+		
+		// トークン
 		String tokenInSession = (String) session.getAttribute("loginToken");
 		if (loginToken == null || !(loginToken.equals(tokenInSession))) {
 			return "redirect:/";
 		}
 		session.removeAttribute("loginToken");
 		
+		// 入力値チェック
 		if (result.hasErrors()) {
 			return this.toLogin();
 		}
 
+		// 管理者情報の照合
 		Administrator administrator = administratorService.login(form.getMailAddress(), form.getPassword());
 		if (administrator == null) {
 			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが間違っています");
