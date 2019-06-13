@@ -1,6 +1,5 @@
 package jp.co.sample.emp_management.controller;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +61,7 @@ public class AdministratorController {
 	@RequestMapping("/toInsert")
 	public String toInsert() {
 		String token = UUID.randomUUID().toString();
-		session.setAttribute("token", token);
+		session.setAttribute("insertToken", token);
 		return "administrator/insert";
 	}
 
@@ -74,30 +72,29 @@ public class AdministratorController {
 	 * @return ログイン画面へリダイレクト
 	 */
 	@RequestMapping("/insert")
-	public String insert(@Validated InsertAdministratorForm form, BindingResult result, Model model, String token) {
+	public String insert(@Validated InsertAdministratorForm form, BindingResult result, Model model, String insertToken) {
 
+		// トークン
+		String tokenInSession = (String) session.getAttribute("insertToken");
+		if (insertToken == null || !(insertToken.equals(tokenInSession))) {
+			return "redirect:/toInsert";
+		}
+		session.removeAttribute("insertToken");
+		
 		if (result.hasErrors()) {
 			return this.toInsert();
 		}
-		
+
 		if (!form.getPassword().equals(form.getPasswordAgain())) {
 			System.out.println("OK");
 			model.addAttribute("passwordError", "入力されたパスワードが異なります");
 			return this.toInsert();
 		}
 
-		// トークン
-		String tokenInSession = (String) session.getAttribute("token");
-		if (token == null || !(token.equals(tokenInSession))) {
-			return "redirect:/";
-		}
-
-		session.removeAttribute("token");
-
 		Administrator administrator = new Administrator();
 		// フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, administrator);
-		
+
 		if (administratorService.findByMailAddress(administrator.getMailAddress()) == true) {
 			model.addAttribute("mailAddressError", "既に同じメールアドレスが登録されています");
 			return this.toInsert();
@@ -117,6 +114,8 @@ public class AdministratorController {
 	 */
 	@RequestMapping("/")
 	public String toLogin() {
+		String token = UUID.randomUUID().toString();
+		session.setAttribute("loginToken", token);
 		return "administrator/login";
 	}
 
@@ -128,20 +127,26 @@ public class AdministratorController {
 	 * @return ログイン後の従業員一覧画面
 	 */
 	@RequestMapping("/login")
-	public String login(@Validated LoginForm form, BindingResult result, Model model) {
-		if(result.hasErrors()) {
-			System.out.println("OK");
+	public String login(@Validated LoginForm form, BindingResult result, Model model, String loginToken) {
+		/** トークン **/
+		String tokenInSession = (String) session.getAttribute("loginToken");
+		if (loginToken == null || !(loginToken.equals(tokenInSession))) {
+			return "redirect:/";
+		}
+		session.removeAttribute("loginToken");
+		
+		if (result.hasErrors()) {
 			return this.toLogin();
 		}
-		
+
 		Administrator administrator = administratorService.login(form.getMailAddress(), form.getPassword());
 		if (administrator == null) {
 			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが間違っています");
 			return toLogin();
 		}
-		
+
 		session.setAttribute("administratorName", administrator.getName());
-		
+
 		return "forward:/employee/showList";
 	}
 

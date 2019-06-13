@@ -48,6 +48,7 @@
 								<label th:if="${#fields.hasErrors('password')}" class="error-messages">パスワードを入力してください </label>
 								<input th:field="*{password}" type="password" name="password" id="inputPassword" class="form-control" placeholder="Password">
 							</div>
+							<input type="hidden" name="loginToken" th:value="${session.loginToken}">
 							<div class="form-group">
 								<button type="submit" class="btn btn-primary">ログイン</button>
 							</div>
