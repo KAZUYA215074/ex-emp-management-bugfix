@@ -53,7 +53,6 @@ public class EmployeeController {
 		if (name == null) {
 			employeeList = employeeService.showList();
 		} else {
-			System.out.println("OK");
 			employeeList = employeeService.serchEmployeeList(name);
 			if (employeeList.size() == 0) {
 				model.addAttribute("error", "※結果はありませんでした");
