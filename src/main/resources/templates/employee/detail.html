@@ -166,11 +166,17 @@
 										 th:errorclass="error-input" th:value="${employee.dependentsCount}">
 							    </td>
 							  </tr>
+							  <tr>
+							    <th nowrap>
+							      <button type="submit" class="btn btn-primary">更新</button>
+							    </th>
+							    <td align="right">
+							    	<a th:href="@{/employee/showList}">従業員リストへ</a>
+							    </td>
+							  </tr>
 							</table>
-							<button type="submit" class="btn btn-primary">更新</button>
 						</fieldset>
 					</form>
-					
 					
 <!-- ここから下を編集する必要はありません -->
 				</div>
