@@ -2,6 +2,7 @@ package jp.co.sample.emp_management.controller;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import jp.co.sample.emp_management.domain.Employee;
 import jp.co.sample.emp_management.form.UpdateEmployeeForm;
+import jp.co.sample.emp_management.form.insertEmployeeForm;
 import jp.co.sample.emp_management.service.EmployeeService;
 
 /**
@@ -101,8 +103,28 @@ public class EmployeeController {
 		return "redirect:/employee/showList";
 	}
 
+	/**
+	 * 従業員登録画面を表示する
+	 * 
+	 * @return 従業員登録画面
+	 */
 	@RequestMapping("/toInsert")
 	public String toInsert() {
 		return "employee/insert";
+	}
+
+	@RequestMapping("/insert")
+	public String insert(insertEmployeeForm form, Model model) {
+		
+		Employee employee = new Employee();
+		// フォームからドメインにプロパティ値をコピー
+		BeanUtils.copyProperties(form, employee);
+		
+		// 画像ファイル名をコピー
+		String image = form.getImage().getOriginalFilename();
+		employee.setImage(image);
+		
+		
+		return "redirect:/employee/showList";
 	}
 }

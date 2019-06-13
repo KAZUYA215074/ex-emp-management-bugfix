@@ -10,11 +10,6 @@ public class CommonController implements ErrorController {
 	
 	private static final String PATH = "/error";
 	
-	@RequestMapping("/maintenance")
-	public String maintenance() {
-		return "common/error";
-	}
-	
 	@Override
 	@RequestMapping(PATH)
 	public String getErrorPath() {
