@@ -51,13 +51,13 @@ public class EmployeeController {
 
 		List<Employee> employeeList;
 		if (name == null) {
+			name = "";
+		}
+
+		employeeList = employeeService.serchEmployeeList(name);
+		if (employeeList.size() == 0) {
+			model.addAttribute("error", "※結果はありませんでした");
 			employeeList = employeeService.showList();
-		} else {
-			employeeList = employeeService.serchEmployeeList(name);
-			if (employeeList.size() == 0) {
-				model.addAttribute("error", "※結果はありませんでした");
-				employeeList = employeeService.showList();
-			}
 		}
 		model.addAttribute("employeeList", employeeList);
 		return "employee/list";
@@ -99,5 +99,10 @@ public class EmployeeController {
 		employee.setDependentsCount(form.getIntDependentsCount());
 		employeeService.update(employee);
 		return "redirect:/employee/showList";
+	}
+
+	@RequestMapping("/toInsert")
+	public String toInsert() {
+		return "employee/insert";
 	}
 }

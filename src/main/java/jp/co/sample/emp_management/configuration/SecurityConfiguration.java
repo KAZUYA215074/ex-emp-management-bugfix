@@ -1,4 +1,4 @@
-package jp.co.sample.emp_management.Configuration;
+package jp.co.sample.emp_management.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
