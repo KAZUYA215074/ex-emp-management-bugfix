@@ -64,6 +64,16 @@
 
 <!-- ここにモックのtable要素を貼り付けます -->
 
+				<br>
+				<form th:action="@{/employee/showList}" method="post">
+				<div th:text="${error}" style="color: red"></div>
+				名前検索：
+				<input type="text" name="name">
+				<button>検索</button>				
+				</form>
+				<br>
+				<br>
+				
 				<table class="table table-striped">
 					<thead>
 						<tr>

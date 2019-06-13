@@ -67,7 +67,7 @@ public class AdministratorService {
 	 * @param password パスワード
 	 * @return ハッシュ化されたパスワード
 	 */
-	public String Encde(String password) {
+	public String encde(String password) {
 		return passwordEncoder.encode(password);
 	}
 }

@@ -117,7 +117,7 @@ public class AdministratorController {
 			return this.toInsert();
 		}
 		// パスワードのハッシュ化
-		String hashedPassword = administratorService.Encde(administrator.getPassword());
+		String hashedPassword = administratorService.encde(administrator.getPassword());
 		administrator.setPassword(hashedPassword);
 		
 		administratorService.insert(administrator);
