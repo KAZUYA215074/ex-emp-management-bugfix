@@ -120,9 +120,15 @@ public class Employee {
 	public Date getHireDate() {
 		return hireDate;
 	}
+	
+	public java.util.Date convertToUtilDate(java.sql.Date sqlDate){
+	    return sqlDate;
+	}
 
-	public void setHireDate(Date hireDate) {
-		this.hireDate = hireDate;
+	public void setHireDate(java.sql.Date hireDate) {
+		java.util.Date date=this.convertToUtilDate(hireDate);
+		
+		this.hireDate = date;
 	}
 
 	public String getMailAddress() {

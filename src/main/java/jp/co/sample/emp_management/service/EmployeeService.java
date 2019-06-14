@@ -58,6 +58,11 @@ public class EmployeeService {
 		return employeeList;
 	}
 	
+	/**
+	 * 従業員情報を登録します.
+	 * 
+	 * @param employee
+	 */
 	public void insert(Employee employee) {
 		employeeRepository.insert(employee);
 	}

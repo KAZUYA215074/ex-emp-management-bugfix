@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -65,6 +66,7 @@ public class EmployeeController {
 			model.addAttribute("error", "※結果はありませんでした");
 			employeeList = employeeService.showList();
 		}
+
 		model.addAttribute("employeeList", employeeList);
 		return "employee/list";
 	}
@@ -119,29 +121,29 @@ public class EmployeeController {
 
 	@RequestMapping("/insert")
 	public String insert(insertEmployeeForm form, Model model) {
-		
+
 //		Path path = Paths.get("C:/env/springworkspace/ex-emp-management-bugfix/src/main/resources/static/img");
-		
+
 		Employee employee = new Employee();
 		// フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, employee);
-		
+
 		// コピーできなかった値を直接代入
 		// 画像ファイル名をコピー
 		String image = form.getImage().getOriginalFilename();
 		employee.setImage(image);
-		
+
 		// 入社日をドメインへ書き込む
-		Date hireDate= Date.valueOf("2017-03-02");
+		Date hireDate = Date.valueOf("2017-03-02");
 		employee.setHireDate(hireDate);
-		
+
 		// idの取得
-		int id = employeeService.showList().size()+1;
+		int id = employeeService.showList().size() + 1;
 		employee.setId(id);
-		
+
 		// 画像を保存します
 		try {
-			File file = new File("C:/env/springworkspace/ex-emp-management-bugfix/src/main/resources/static/img/"+image); 
+			File file = new File("src/main/resources/static/img/" + image);
 			file.createNewFile();
 			FileOutputStream fileOutputStream = new FileOutputStream(file);
 			fileOutputStream.write(form.getImage().getBytes());
@@ -150,10 +152,10 @@ public class EmployeeController {
 			System.out.println("ファイル生成に失敗しました");
 			e.printStackTrace();
 		}
-		
+
 		// データベースに情報を登録します
 		employeeService.insert(employee);
-		
+
 		return "redirect:/employee/showList";
 	}
 }
