@@ -54,7 +54,11 @@ public class EmployeeService {
 	}
 	
 	public List<Employee> serchEmployeeList(String name) {
-		List<Employee> employeeList = employeeRepository.serchEmployeeList(name);
+		List<Employee> employeeList = employeeRepository.findEmployeeList(name);
 		return employeeList;
+	}
+	
+	public void insert(Employee employee) {
+		employeeRepository.insert(employee);
 	}
 }

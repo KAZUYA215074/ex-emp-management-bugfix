@@ -1,7 +1,5 @@
 package jp.co.sample.emp_management.form;
 
-import java.util.Date;
-
 import org.springframework.web.multipart.MultipartFile;
 
 /**

@@ -84,12 +84,24 @@ public class EmployeeRepository {
 		template.update(updateSql, param);
 	}
 
-	public List<Employee> serchEmployeeList(String name) {
+	public List<Employee> findEmployeeList(String name) {
 		String nameSql = "%" + name + "%";
 		String sql = "SELECT id,name,image,gender,hire_date,mail_address,zip_code,address,telephone,salary,characteristics,dependents_count FROM employees WHERE name like :name ORDER BY hire_date";
 		SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameSql);
 		List<Employee> employeeList = template.query(sql, param, EMPLOYEE_ROW_MAPPER);
 
 		return employeeList;
+	}
+	
+	/**
+	 * 従業員情報を登録します.
+	 * 
+	 * @param employee
+	 */
+	public void insert(Employee employee) {
+		SqlParameterSource param = new BeanPropertySqlParameterSource(employee);
+		String sql = "insert into employees(id,name,image,gender,hire_date,mail_address,zip_code,address,telephone,salary,characteristics,dependents_count)"
+				+ "values(:id,:name,:image,:gender,:hireDate,:mailAddress,:zipCode,:address,:telephone,:salary,:characteristics,:dependentsCount)";
+		template.update(sql, param);
 	}
 }
