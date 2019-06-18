@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -66,9 +67,12 @@ public class EmployeeController {
 			employeeList = employeeService.showList();
 		}
 
+		
+		
 		model.addAttribute("employeeList", employeeList);
 		return "employee/list";
 	}
+
 
 	/////////////////////////////////////////////////////
 	// ユースケース：従業員詳細を表示する
